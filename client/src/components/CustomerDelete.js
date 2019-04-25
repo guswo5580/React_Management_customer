@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
 class CustomerDelete extends Component {
+    //고객 정보를 삭제하는 컴포넌트 
     constructor(props){
         super(props);
         this.state = {
@@ -22,16 +23,20 @@ class CustomerDelete extends Component {
         });
     }
     handleClickClose = () => {
+        //modal이 닫힌 경우
         this.setState({
             open : false
         });
     }
 
     deleteCustomer = (id) => {
+        //서버에 삭제 신호를 주는 과정
         const url = '/api/customers/' + id;
+        //id = params 값으로 전송
         fetch(url, {
+            //fetch를 이용하여 전송할 경우, method를 통해 명령을 전달시켜주어야 함
+            //axios 를 이용하는 것으로... 
             method : 'DELETE'
-            //REST API 의 delete 메소드를 전송
         });
         this.props.stateRefresh();
     }
@@ -41,6 +46,7 @@ class CustomerDelete extends Component {
             // <button onClick={this.deleteCustomer(this.props.id)}>삭제</button>
             <div>
                 <Button variant="contained" color="secondary" onClick={this.handleClickOpen}>삭제</Button>
+                {/* 삭제 여부에 대한 재확인 모달 이용 */}
                 <Dialog open={this.state.open} onClose={this.handleClickClose}>
                     <DialogTitle onClose={this.handleClickClose}>
                         삭제하시겠습니까?
@@ -52,6 +58,7 @@ class CustomerDelete extends Component {
                     </DialogContent>
                     <DialogActions>
                         <Button variant="contained" color="primary" onClick={this.deleteCustomer(this.props.id)}>삭제</Button>
+                        {/* props로 전달되는 id를 이용 */}
                         <Button variant="outlined" color="primary" onClick={this.handleClickClose}>닫기</Button>
                     </DialogActions>
                 </Dialog>

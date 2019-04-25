@@ -4,7 +4,7 @@ import './App.css';
 import Customer from './components/Customer';
 import CustomerAdd from './components/CustomerAdd';
 
-/////////Material-UI for Table///////////
+/////////Material-UI for Table Design///////////
 import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead'
@@ -14,7 +14,7 @@ import TableCell from '@material-ui/core/TableCell'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import {withStyles} from '@material-ui/core/styles'
 
-/////////Materia-UI for Appbar////////////
+/////////Materia-UI for Appbar Design////////////
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -27,6 +27,7 @@ import SearchIcon from '@material-ui/core/Search';
 class App extends Component {
   constructor(props){
     super(props);
+    //기본 State 변수 정의
     this.state = {
       customers : '',
       completed : 0,
@@ -34,47 +35,60 @@ class App extends Component {
     }
   }
 
+  componentDidMount(){
+    //0.02초 마다 progress를 실행하며, 프로그래스 바의 상태를 최신화 
+    this.timer = setInterval(this.progress, 20);
+    this.callApi()
+      .then( res => this.setState({customers : res }))
+      //customer에 대한 정보가 반환되면 state의 customers 변수에 저장
+      .catch( err => console.log(err))
+  }
+  progress = () => {
+    const {completed} = this.state;
+    //데이터 로딩의 정도를 complete 변수로 표현 0~100
+    this.setState({completed : completed >=100 ? 0 : completed+1});
+  }
+
   stateRefresh = () => {
+    //고객 추가, 삭제 등이 일어났을 때, 고객 목록을 새로고침하는 함수
     this.setState({
       customers : '',
       completed : 0,
       searchKeyword : ''
+      //state를 초기화 
     });
     this.callApi()
+    //바뀐 customers의 정보를 새롭게 요청
       .then(res => this.setState({customers : res}))
       .catch(err => console.log(err));
   }
-
-  componentDidMount(){
-    this.timer = setInterval(this.progress, 20);
-    this.callApi()
-      .then( res => this.setState({customers : res }))
-      .catch( err => console.log(err))
-  }
+  
   callApi = async () => {
+    //DB에 대해 customer에 대한 정보를 요청
     const response = await fetch('/api/customers');
     const body = await response.json();
     return body;
   }
 
-  progress = () => {
-    const {completed} = this.state;
-    this.setState({completed : completed >=100 ? 0 : completed+1});
-  }
-
+  //검색어를 입력했을 때의 함수  
   handleValueChange = (e) => {
     let nextState = {};
     nextState[e.target.name] = e.target.value;
+    //기준은 넘어온 태그에 대한 name , 값은 태그에 대한 value 
     this.setState(nextState);
+    //nextState의 값을 State로 저장
   }
 
   render(){
+    //Appbar에서 검색에 대한 정보 반환을 함수화로 바꾸어 선언
     const filterdComponents = (data) => {
       data = data.filter( (c) => {
         return c.name.indexOf(this.state.searchKeyword) > -1;
         //전체 목록 중 keyword로 입력한 문자열을 포함한 것이 있으면 data에 담아 반환
+        //searchKeyword 가 ''이라면 모든 목록을 그대로 수행
       });
       return data.map( (c) => {
+        //data에 대한 정보에 대해 나열
         return <Customer
           stateRefresh={this.stateRefresh}
           key={c.id}
@@ -86,9 +100,9 @@ class App extends Component {
         />
       });
     }
-
     const { classes } = this.props;
     const cellList = ["번호" , "프로필 이미지", "이름", "생년월일", "성별", "직업"]
+    
     return (
       <div className={classes.root}>
         <AppBar position="static">
@@ -125,8 +139,9 @@ class App extends Component {
         <Paper className={classes.paper}>
           <Table className={classes.table}>
             <TableHead>
-              {/* 테이블 속성 정의 */}
+              {/* 테이블 Attribute 정의 */}
               <TableRow>
+                {/* cellList 배열에 저장한 값을 꺼내여 TableCell로 표현 */}
                 {cellList.map( c => {
                   return <TableCell className={classes.tableHead}>{c}</TableCell>;
                 })}
@@ -139,19 +154,19 @@ class App extends Component {
                 <TableRow>
                   <TableCell colSpan="6" align="center">
                     <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed}/>
+                    {/* 데이터 로딩이 되지 않았을 때까지 프로그래스 바를 실행 */}
                   </TableCell>
                 </TableRow>
               }
             </TableBody>
           </Table>
       </Paper>
-      
-      {/* 함수를 props 형태로 보냄 */}
     </div>
     );
   }
 }
 
+//Material UI 의 css 를 정의하는 부분
 const styles = theme => ({
   root : {
     width :'100%',

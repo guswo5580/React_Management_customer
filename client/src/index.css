@@ -1,5 +1,5 @@
 @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
-
+/* index.css 에서 이용할 폰트의 url 선언, body에 적용!! */
 body {
   margin: 0;
   padding: 0;

@@ -1,9 +1,18 @@
 import React, {Component} from 'react';
 import CustomerDelete from './CustomerDelete';
+
+//////////Material UI/////////////
 import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
 
 class Customer extends Component {
+    //Customer 목록을 Table에 담아 render하는 component
+    constructor(props){
+        super(props);
+        this.setState({
+
+        });
+    }
     render(){
         return (
             <TableRow>
